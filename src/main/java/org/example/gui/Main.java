@@ -37,7 +37,7 @@ public class Main extends JFrame {
             styleMenuBar(new ArrayList<>(Arrays.asList(tab1, tab2)));
         }
 
-        panel = repertoireJPanel;
+        panel = moviesJPanel;
         add(panel);
         panel.setBounds(25,125,1350,715);
         setVisible(true);
@@ -74,43 +74,85 @@ public class Main extends JFrame {
         });
     }
 
+    // TODO NWM CZEMU TEDWIE FUNKCJE WYGLADAJA IDENTYCZNIE A WIDAC TYLKO REPERTUAR !!!
     private void createPanelRepertoire() {
         repertoireJPanel = new JScrollPane();
-        repertoireJPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        repertoireJPanel.setLayout(null);
-        JPanel pnl = new JPanel();
-        pnl.setBounds(0,0,1350,715);
-        SpringLayout layout = new SpringLayout();
-        pnl.setLayout(layout);
-
-        //TODO pobrac dane kin
-        ArrayList<String> cinemas = new ArrayList<>(Arrays.asList("-----","Wrocław - Arkady", "Wrocław - Pasaz Grunwaldzki", "Wrocław - Magnolia", "Warszawa - Galeria"));
-        JComboBox cinemasCombo = new JComboBox(cinemas.toArray());
-
-        pnl.add(cinemasCombo);
-
-        Font dataFont = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
-        cinemasCombo.setFont(dataFont);
-        ((JLabel) cinemasCombo.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-        //TODO dla wybranego kina pobrac filmy
-
-        layout.putConstraint(SpringLayout.WEST, cinemasCombo, 200, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.EAST, cinemasCombo, -200, SpringLayout.EAST, pnl);
-
-        repertoireJPanel.add(pnl);
+//        repertoireJPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+//        repertoireJPanel.setLayout(null);
+//        JPanel pnl = new JPanel();
+//        pnl.setBounds(0,0,1350,715);
+//        SpringLayout layout = new SpringLayout();
+//        pnl.setLayout(layout);
+//
+//        //TODO pobrac dane kin
+//        ArrayList<String> cinemas = new ArrayList<>(Arrays.asList("-----","Wrocław - Arkady", "Wrocław - Pasaz Grunwaldzki", "Wrocław - Magnolia", "Warszawa - Galeria"));
+//        JComboBox cinemasCombo = new JComboBox(cinemas.toArray());
+//
+//        pnl.add(cinemasCombo);
+//
+//        Font dataFont = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
+//        cinemasCombo.setFont(dataFont);
+//        ((JLabel) cinemasCombo.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+//
+//        //TODO dla wybranego kina pobrac filmy
+//
+//        layout.putConstraint(SpringLayout.WEST, cinemasCombo, 200, SpringLayout.WEST, pnl);
+//        layout.putConstraint(SpringLayout.EAST, cinemasCombo, -200, SpringLayout.EAST, pnl);
+//
+//        repertoireJPanel.add(pnl);
+        repertoireJPanel.setBackground(Color.RED);
     }
 
     private void createPanelMovies() {
         moviesJPanel = new JScrollPane();
-        moviesJPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        moviesJPanel.setLayout(null);
-        JPanel pnl = new JPanel();
-        pnl.setBounds(0,0,1350,715);
-        SpringLayout layout = new SpringLayout();
-        pnl.setLayout(layout);
+//        moviesJPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+//        moviesJPanel.setLayout(null);
+//        JPanel pnl = new JPanel();
+//        pnl.setBounds(0,0,1350,715);
+//        SpringLayout layout = new SpringLayout();
+//        pnl.setLayout(layout);
 
-        moviesJPanel.add(pnl);
+//        ArrayList<String> categories = new ArrayList<>(Arrays.asList("---","Action","Comedy"));
+//        ArrayList<String> languages = new ArrayList<>(Arrays.asList("---","English","Polish"));
+//        ArrayList<String> actors = new ArrayList<>(Arrays.asList("---","Will Smith","Morgan Freeman"));
+//        JLabel filterCategoryLbl = new JLabel("Category");
+//        JComboBox filterCategoryChoose = new JComboBox(categories.toArray());
+//        JLabel filterLanguageLbl = new JLabel("Language");
+//        JComboBox filterLanguageChoose = new JComboBox(languages.toArray());
+//        JLabel filterReleaseLbl = new JLabel("Release Date");
+//        JTextField filterReleaseChoose = new JTextField();
+//        JLabel filterActorLbl = new JLabel("Actor");
+//        JComboBox filterActorChoose = new JComboBox(actors.toArray());
+//        JLabel filterRatingLbl = new JLabel("Ratings");
+//        JSlider filterRatingChoose = new JSlider(SwingConstants.HORIZONTAL, 1, 10, 1);
+//        JButton filterBtn = new JButton("Filter");
+//
+//        pnl.add(filterCategoryLbl);
+//        pnl.add(filterCategoryChoose);
+//        pnl.add(filterLanguageLbl);
+//        pnl.add(filterLanguageChoose);
+//        pnl.add(filterReleaseLbl);
+//        pnl.add(filterReleaseChoose);
+//        pnl.add(filterActorLbl);
+//        pnl.add(filterActorChoose);
+//        pnl.add(filterRatingLbl);
+//        pnl.add(filterRatingChoose);
+//        pnl.add(filterBtn);
+//
+//        filterCategoryLbl.setFont(dataFont);
+//        filterCategoryChoose.setFont(dataFont);
+//        filterLanguageLbl.setFont(dataFont);
+//        filterLanguageChoose.setFont(dataFont);
+//        filterReleaseLbl.setFont(dataFont);
+//        filterReleaseChoose.setFont(dataFont);
+//        filterActorLbl.setFont(dataFont);
+//        filterActorChoose.setFont(dataFont);
+//        filterRatingLbl.setFont(dataFont);
+//        filterRatingChoose.setFont(dataFont);
+//        filterBtn.setFont(dataFont);
+
+//        moviesJPanel.add(pnl);
+        moviesJPanel.setBackground(Color.RED);
     }
 
     private void createPanelMyAccount() {
