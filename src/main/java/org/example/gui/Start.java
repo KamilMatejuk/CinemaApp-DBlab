@@ -15,7 +15,7 @@ public class Start
     }
 
     private static void startupGUI() {
-        JFrame frame = new JFrame("Cinema App");
+        final JFrame frame = new JFrame("Cinema App");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setSize(700, 400);
@@ -45,19 +45,20 @@ public class Start
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFrame popup = new LoginPopup();
+                new LoginPopup();
             }
         });
         registerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFrame popup = new RegisterPopup();
+                new RegisterPopup();
             }
         });
         noAccountLbl.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                JFrame main = new Main();
+                frame.setVisible(false);
+                new Main();
             }
             public void mousePressed(MouseEvent mouseEvent) {}
             public void mouseReleased(MouseEvent mouseEvent) {}
