@@ -152,7 +152,7 @@ public class Main extends JFrame {
 //        filterBtn.setFont(dataFont);
 
 //        moviesJPanel.add(pnl);
-        moviesJPanel.setBackground(Color.RED);
+        moviesJPanel.setBackground(Color.ORANGE);
     }
 
     private void createPanelMyAccount() {
