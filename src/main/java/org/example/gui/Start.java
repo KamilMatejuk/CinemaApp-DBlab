@@ -7,15 +7,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Start
-{
+public class Start {
+
+    private static JFrame frame = new JFrame();
+
     public static void main( String[] args )
     {
         startupGUI();
     }
 
     private static void startupGUI() {
-        final JFrame frame = new JFrame("Cinema App");
+        frame = new JFrame("Cinema App");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setSize(700, 400);
@@ -45,20 +47,20 @@ public class Start
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                new LoginPopup();
+                new LoginPopup(frame);
             }
         });
         registerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                new RegisterPopup();
+                new RegisterPopup(frame);
             }
         });
         noAccountLbl.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 frame.setVisible(false);
-                new Main();
+                new Main("notlogged");
             }
             public void mousePressed(MouseEvent mouseEvent) {}
             public void mouseReleased(MouseEvent mouseEvent) {}

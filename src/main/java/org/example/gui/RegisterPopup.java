@@ -9,27 +9,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.*;
 
 public class RegisterPopup extends JFrame {
 
     JFrame fr = this;
+    JFrame prevFr;
 
-    RegisterPopup(){
+    RegisterPopup(JFrame frame){
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setResizable(false);
         setSize(250, 315);
 
         // center window
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        prevFr = frame;
+        int locX = frame.getX() + frame.getWidth()/2 - this.getSize().width/2;
+        int locY = frame.getY() + frame.getHeight()/2 - this.getSize().height/2;
+        this.setLocation(locX, locY);
 
         final JTextFieldWithHint name = new JTextFieldWithHint(" name");
         final JTextFieldWithHint surname = new JTextFieldWithHint(" surname");
-        final JTextFieldWithHint birth = new JTextFieldWithHint(" birth (DD-MM-YYYY)");
+        final JTextFieldWithHint birth = new JTextFieldWithHint(" birth (YYYY-MM-DD)");
         final JTextFieldWithHint email = new JTextFieldWithHint(" email");
         final JTextFieldWithHint pass = new JTextFieldWithHint(" password");
-        final JButton save = new JButton("Log in");
+        final JButton save = new JButton("Create");
 
         name.setBounds(25, 25, 200, 30);
         surname.setBounds(25, 65, 200, 30);
@@ -66,14 +70,60 @@ public class RegisterPopup extends JFrame {
                     String b = birth.getTxt();
                     String e = email.getTxt();
                     String p = pass.getTxt();
+                    createClient(n,s,b,e,p);
                     fr.dispatchEvent(new WindowEvent(fr, WindowEvent.WINDOW_CLOSING));
                 } catch (EmptyTextFieldException ex) {
-                    JOptionPane.showMessageDialog(fr,
-                            "Please fill all data",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(fr,"Please fill all data","Error",JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+    }
+
+    private void createClient(String name, String surname, String birth, String email, String password) {
+        try {
+            // connect to db
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/dblab5?noAccessToProcedureBodies=true",
+                    "notlogged",
+                    "userPassword1!");
+
+            // create the java statement
+            CallableStatement stCreateUsr = conn.prepareCall("{? = CALL createCustomer(?,?,?,?,?)}");
+            stCreateUsr.registerOutParameter(1, Types.INTEGER);
+            stCreateUsr.setString(2,email);
+            stCreateUsr.setString(3,name);
+            stCreateUsr.setString(4,surname);
+            stCreateUsr.setString(5,password);
+            stCreateUsr.setDate(6, Date.valueOf(birth));
+            stCreateUsr.execute();
+            int new_user_id = stCreateUsr.getInt(1);
+            stCreateUsr.close();
+            if(new_user_id == 0){
+                JOptionPane.showMessageDialog(fr,"Something went wrong","Error",JOptionPane.ERROR_MESSAGE);
+            } else {
+                org.example.panels.Panel.setUserID(new_user_id);
+                new Main("logged");
+                prevFr.setVisible(false);
+            }
+
+        } catch (SQLException ex){
+            switch (Integer.parseInt(ex.getSQLState())){
+                case 77777:
+                    JOptionPane.showMessageDialog(fr,"User with this email already exists","Error",JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 77778:
+                    JOptionPane.showMessageDialog(fr,"You have to be atleast 16 years old","Error",JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 77779:
+                    JOptionPane.showMessageDialog(fr,"Type valid email","Error",JOptionPane.ERROR_MESSAGE);
+                    break;
+            }
+        } catch (IllegalArgumentException ex){
+            JOptionPane.showMessageDialog(fr,"Type valid date","Error",JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -17,10 +17,19 @@ public class Main extends JFrame {
     JFrame frame = this;
     JScrollPane panel;
 
-    Main(){
-        //TODO sprawdzić
-        org.example.panels.Panel.setIsLoggedIn(true);
-        org.example.panels.Panel.setIsAdmin(true);
+    Main(String type){
+        if(type.equals("notlogged")){
+            org.example.panels.Panel.setIsLoggedIn(false);
+            org.example.panels.Panel.setIsAdmin(false);
+        }
+        else if(type.equals("logged")){
+            org.example.panels.Panel.setIsLoggedIn(true);
+            org.example.panels.Panel.setIsAdmin(false);
+        }
+        else if(type.equals("admin")){
+            org.example.panels.Panel.setIsLoggedIn(true);
+            org.example.panels.Panel.setIsAdmin(true);
+        }
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
@@ -36,11 +45,11 @@ public class Main extends JFrame {
 
         if(Panel.getIsLoggedIn()){
             styleMenuBar(new ArrayList<>(Arrays.asList(tab1, tab2, tab3)));
+            panel = Account.getPanel();
         } else {
             styleMenuBar(new ArrayList<>(Arrays.asList(tab1, tab2)));
+            panel = Repertoire.getPanel();
         }
-
-        panel = Account.getPanel();
         frame.add(panel);
         panel.setBounds(25,125,1350,715);
         setVisible(true);

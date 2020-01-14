@@ -1,20 +1,61 @@
 package org.example.panels;
 
+import org.example.gui.Main;
 import org.example.panels.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Account extends Panel {
 
     private static JScrollPane panel;
+    private static JLabel name;
+    private static JLabel email;
+    private static JLabel birth;
+    private static JTextArea movie;
 
     public static JScrollPane getPanel(){
         createPanelGUI();
+        loadData();
         return panel;
+    }
+
+    private static void loadData() {
+        try {
+            // connect to db
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn;
+            if(getIsAdmin()){
+                conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/dblab5?noAccessToProcedureBodies=true",
+                        "logged",
+                        "userPassword1!");
+            } else {
+                conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/dblab5?noAccessToProcedureBodies=true",
+                        "admin",
+                        "userPassword1!");
+            }
+
+            // create the java statement
+            CallableStatement stGetCustomer = conn.prepareCall("SELECT email,first_name,last_name,birth FROM Customer WHERE ID=?");
+            stGetCustomer.setInt(1,getUserID());
+            stGetCustomer.execute();
+            ResultSet customers = stGetCustomer.executeQuery();
+            while (customers.next()){
+                System.out.println(customers.getString("email"));
+                name.setText(customers.getString("first_name") + " " + customers.getString("last_name"));
+                email.setText(customers.getString("email"));
+                birth.setText(customers.getString("birth"));
+            }
+            stGetCustomer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void createPanelGUI() {
@@ -31,14 +72,15 @@ public class Account extends Panel {
         //TODO pobrac z bazy dane uzytkownika
         //TODO dodać wylogowywanie
         JLabel titleYourData = new JLabel("Your Data:");
-        JLabel name = new JLabel("John Smith");
-        JLabel email = new JLabel("johnsmith@mail.com");
-        JLabel birth = new JLabel("01-01-1990");
+        name = new JLabel("loading...");
+        email = new JLabel("loading...");
+        birth = new JLabel("loading...");
         JLabel pass = new JLabel("***************");
         JButton editBtn = new JButton("Edit");
 
         JLabel titleYourMovies = new JLabel("Your Movies:");
-        JTextArea movie = new JTextArea("Currently you dont have any movies booked.\nSearch for movies and book them, then you'll see them here.");
+//        JTextArea movie = new JTextArea("Currently you dont have any movies booked.\nSearch for movies and book them, then you'll see them here.");
+        JTextArea movie = new JTextArea("loading...");
 
         pnl.add(logout);
         pnl.add(titleYourData);
@@ -145,6 +187,7 @@ public class Account extends Panel {
             }
         }
 
+        //TODO przy dodawaniu filmow zrobić osobno dodanie nowego tytułu i osobno dodanie po prostu godziny do istniejących filmow z bazy
         panel.add(pnl);
     }
 }
