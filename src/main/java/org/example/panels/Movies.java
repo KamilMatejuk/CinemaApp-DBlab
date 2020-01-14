@@ -112,64 +112,67 @@ public class Movies extends Panel {
                 JLabel time = new JLabel(rsMovies.getInt("Movie.length") + " min");
                 JTextArea desc = new JTextArea(rsMovies.getString("Movie.description"));
                 JLabel rate = new JLabel("rating: " + rsMovies.getString("Rating.avg").substring(0,4));
-                JButton rateBtn = new JButton("rate");
                 tempPanel.add(title);
                 tempPanel.add(time);
                 tempPanel.add(desc);
                 tempPanel.add(rate);
-                tempPanel.add(rateBtn);
                 title.setFont(dataFont);
                 time.setFont(dataFont);
                 desc.setFont(dataFont);
                 rate.setFont(dataFont);
-                rateBtn.setFont(btnFont);
                 title.setBounds(0,0,500,50);
                 time.setBounds(500,0,200,50);
-                desc.setBounds(0,50,700,150);
-                rate.setBounds(0,200,500,50);
-                rateBtn.setBounds(500,200,200,50);
+                desc.setBounds(0,50,700,75);
+                rate.setBounds(0,125,500,50);
                 desc.setWrapStyleWord(true);
                 desc.setBackground(new Color(0,0,0,0));
-                rateBtn.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        try {
-                            Object[] possibilities = {1,2,3,4,5,6,7,8,9,10};
-                            int r = (int)JOptionPane.showInputDialog(
-                                    getMainFrame(),
-                                    "Rate on a scale of 1-10",
-                                    "Rating Dialog",
-                                    JOptionPane.PLAIN_MESSAGE,
-                                    null,
-                                    possibilities,
-                                    10);
 
-                            CallableStatement stRate = conn.prepareCall("{? = CALL rate(?,?)}");
-                            stRate.registerOutParameter(1,Types.DOUBLE);
-                            stRate.setInt(2,r);
-                            stRate.setInt(3,id);
-                            stRate.execute();
-                            double rate = stRate.getDouble(1);
-                            stRate.close();
-                            System.out.println(rate);
-
-                            String category = filterCategoryChoose.getSelectedItem().toString();
-                            String language = filterLanguageChoose.getSelectedItem().toString();
-                            int release;
-                            String actor = filterActorChoose.getSelectedItem().toString();
-                            int rating = filterRatingChoose.getValue();
+                if(getIsLoggedIn()) {
+                    JButton rateBtn = new JButton("rate");
+                    tempPanel.add(rateBtn);
+                    rateBtn.setFont(btnFont);
+                    rateBtn.setBounds(500, 125, 200, 50);
+                    rateBtn.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent actionEvent) {
                             try {
-                                release = Integer.parseInt(filterReleaseChoose.getText());
-                            } catch (NumberFormatException nfe){
-                                release = 0;
+                                Object[] possibilities = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+                                int r = (int) JOptionPane.showInputDialog(
+                                        getMainFrame(),
+                                        "Rate on a scale of 1-10",
+                                        "Rating Dialog",
+                                        JOptionPane.PLAIN_MESSAGE,
+                                        null,
+                                        possibilities,
+                                        10);
+
+                                CallableStatement stRate = conn.prepareCall("{? = CALL rate(?,?)}");
+                                stRate.registerOutParameter(1, Types.DOUBLE);
+                                stRate.setInt(2, r);
+                                stRate.setInt(3, id);
+                                stRate.execute();
+                                double rate = stRate.getDouble(1);
+                                stRate.close();
+                                System.out.println(rate);
+
+                                String category = filterCategoryChoose.getSelectedItem().toString();
+                                String language = filterLanguageChoose.getSelectedItem().toString();
+                                int release;
+                                String actor = filterActorChoose.getSelectedItem().toString();
+                                int rating = filterRatingChoose.getValue();
+                                try {
+                                    release = Integer.parseInt(filterReleaseChoose.getText());
+                                } catch (NumberFormatException nfe) {
+                                    release = 0;
+                                }
+                                loadData(category, language, release, actor, rating);
+
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
-                            loadData(category,language,release,actor,rating);
-                            
-                        } catch (SQLException e) {
-                            e.printStackTrace();
                         }
-                    }
-                });
+                    });
+                }
 
                 panels.add(tempPanel);
             }
