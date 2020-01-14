@@ -1,5 +1,6 @@
 package org.example.panels;
 
+import org.example.gui.EditPopup;
 import org.example.gui.Main;
 import org.example.panels.Panel;
 
@@ -16,6 +17,7 @@ public class Account extends Panel {
 
     private static JScrollPane panel;
     private static String name="", email="", birth="", movie="";
+    private static Connection conn;
 
     public static JScrollPane getPanel(){
         loadData();
@@ -23,11 +25,10 @@ public class Account extends Panel {
         return panel;
     }
 
-    private static void loadData() {
+    public static void loadData() {
         try {
             // connect to db
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn;
             if(getIsAdmin()){
                 conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/dblab5?noAccessToProcedureBodies=true",
@@ -53,7 +54,6 @@ public class Account extends Panel {
             stGetCustomer.close();
 
             movie = "Currently you dont have any movies booked.\nSearch for movies and book them, then you'll see them here.";
-//            oliverwilliams@gmail.com
             CallableStatement stGetMovies = conn.prepareCall("SELECT movieID FROM Movie_Customer WHERE customerID=?");
             stGetMovies.setInt(1,getUserID());
             stGetMovies.execute();
@@ -107,7 +107,6 @@ public class Account extends Panel {
                 stGetHours.close();
             }
             stGetMovies.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,6 +129,13 @@ public class Account extends Panel {
         JLabel birthLbl = new JLabel(birth);
         JLabel pass = new JLabel("***************");
         JButton editBtn = new JButton("Edit");
+
+        editBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                editData();
+            }
+        });
 
         JLabel titleYourMovies = new JLabel("Your Movies:");
         JTextArea movieTxt = new JTextArea(movie);
@@ -248,14 +254,16 @@ public class Account extends Panel {
             }
         });
 
-        //TODO filtrowanie filmow
         //TODO checkpossibleseats na repertuarze i kupowanie miejsc
         //TODO zrobic edycje danych uzytkownika
         //TODO dodawanie i usuwanie filmow(transakcje),
         //TODO backup,
         //TODO usuwanie uzytkownika
-        //TODO dodać ocenianie filmow w liscie
         //TODO przy dodawaniu filmow zrobić osobno dodanie nowego tytułu i osobno dodanie po prostu godziny do istniejących filmow z bazy
         panel.add(pnl);
+    }
+
+    private static void editData() {
+        new EditPopup(name,email,birth, getUserID());
     }
 }
