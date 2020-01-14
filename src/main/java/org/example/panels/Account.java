@@ -6,6 +6,8 @@ import org.example.panels.Panel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +55,17 @@ public class Account extends Panel {
                 birth.setText(customers.getString("birth"));
             }
             stGetCustomer.close();
+
+//            elijahwilliams@wp.pl
+            CallableStatement stGetMovies = conn.prepareCall("SELECT movieID FROM Movie_Customer WHERE customerID=?");
+            stGetMovies.setInt(1,getUserID());
+            stGetMovies.execute();
+            ResultSet movies = stGetMovies.executeQuery();
+            while (movies.next()){
+                System.out.println(movies.getString("movieID"));
+            }
+            stGetCustomer.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,6 +199,14 @@ public class Account extends Panel {
                 b.setBorder(new EmptyBorder(0,0,0,0));
             }
         }
+
+        logout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                org.example.panels.Panel.getMainFrame().setVisible(false);
+                org.example.panels.Panel.getStartFrame().setVisible(true);
+            }
+        });
 
         //TODO przy dodawaniu filmow zrobić osobno dodanie nowego tytułu i osobno dodanie po prostu godziny do istniejących filmow z bazy
         panel.add(pnl);

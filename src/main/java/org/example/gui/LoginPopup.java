@@ -101,9 +101,9 @@ public class LoginPopup extends JFrame {
                 System.out.println(accType);
                 stCheckType.close();
                 if(accType.equals("admin")){
-                    new Main("admin");
+                    new Main("admin",prevFr);
                 } else {
-                    new Main("logged");
+                    new Main("logged",prevFr);
                 }
                 prevFr.setVisible(false);
             }

@@ -17,7 +17,7 @@ public class Main extends JFrame {
     JFrame frame = this;
     JScrollPane panel;
 
-    Main(String type){
+    Main(String type, JFrame fr){
         if(type.equals("notlogged")){
             org.example.panels.Panel.setIsLoggedIn(false);
             org.example.panels.Panel.setIsAdmin(false);
@@ -30,6 +30,8 @@ public class Main extends JFrame {
             org.example.panels.Panel.setIsLoggedIn(true);
             org.example.panels.Panel.setIsAdmin(true);
         }
+        org.example.panels.Panel.setMainFrame(this);
+        org.example.panels.Panel.setStartFrame(fr);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);

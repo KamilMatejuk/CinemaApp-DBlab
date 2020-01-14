@@ -103,7 +103,7 @@ public class RegisterPopup extends JFrame {
                 JOptionPane.showMessageDialog(fr,"Something went wrong","Error",JOptionPane.ERROR_MESSAGE);
             } else {
                 org.example.panels.Panel.setUserID(new_user_id);
-                new Main("logged");
+                new Main("logged",prevFr);
                 prevFr.setVisible(false);
             }
 

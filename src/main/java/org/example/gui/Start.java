@@ -60,7 +60,7 @@ public class Start {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 frame.setVisible(false);
-                new Main("notlogged");
+                new Main("notlogged",frame);
             }
             public void mousePressed(MouseEvent mouseEvent) {}
             public void mouseReleased(MouseEvent mouseEvent) {}
