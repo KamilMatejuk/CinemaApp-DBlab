@@ -15,14 +15,11 @@ import java.util.Arrays;
 public class Account extends Panel {
 
     private static JScrollPane panel;
-    private static JLabel name;
-    private static JLabel email;
-    private static JLabel birth;
-    private static JTextArea movie;
+    private static String name="", email="", birth="", movie="";
 
     public static JScrollPane getPanel(){
-        createPanelGUI();
         loadData();
+        createPanelGUI();
         return panel;
     }
 
@@ -49,22 +46,67 @@ public class Account extends Panel {
             stGetCustomer.execute();
             ResultSet customers = stGetCustomer.executeQuery();
             while (customers.next()){
-                System.out.println(customers.getString("email"));
-                name.setText(customers.getString("first_name") + " " + customers.getString("last_name"));
-                email.setText(customers.getString("email"));
-                birth.setText(customers.getString("birth"));
+                name = customers.getString("first_name") + " " + customers.getString("last_name");
+                email = customers.getString("email");
+                birth = customers.getString("birth");
             }
             stGetCustomer.close();
 
-//            elijahwilliams@wp.pl
+            movie = "Currently you dont have any movies booked.\nSearch for movies and book them, then you'll see them here.";
+//            oliverwilliams@gmail.com
             CallableStatement stGetMovies = conn.prepareCall("SELECT movieID FROM Movie_Customer WHERE customerID=?");
             stGetMovies.setInt(1,getUserID());
             stGetMovies.execute();
             ResultSet movies = stGetMovies.executeQuery();
             while (movies.next()){
-                System.out.println(movies.getString("movieID"));
+                int movie_id = movies.getInt("movieID");
+                CallableStatement stGetHours = conn.prepareCall("SELECT movieID, cinemaID, hourID FROM Movie_Cinema_Hour WHERE ID=?");
+                stGetHours.setInt(1,movie_id);
+                stGetHours.execute();
+                ResultSet hours = stGetHours.executeQuery();
+                while (hours.next()){
+                    int m_id = hours.getInt("movieID");
+                    int c_id = hours.getInt("cinemaID");
+                    int h_id = hours.getInt("hourID");
+                    String movieTitle = "";
+                    String cinemaName = "";
+                    String date = "";
+
+                    CallableStatement stMovieName = conn.prepareCall("SELECT title FROM Movie WHERE ID=?");
+                    stMovieName.setInt(1,m_id);
+                    stMovieName.execute();
+                    ResultSet m = stMovieName.executeQuery();
+                    while (m.next()){
+                        movieTitle = m.getString("title");
+                    }
+                    stMovieName.close();
+
+                    CallableStatement stCinemaName = conn.prepareCall("SELECT name,city FROM Cinema WHERE ID=?");
+                    stCinemaName.setInt(1,c_id);
+                    stCinemaName.execute();
+                    ResultSet c = stCinemaName.executeQuery();
+                    while (c.next()){
+                        cinemaName = c.getString("name") + " (" + c.getString("city") + ")";
+                    }
+                    stCinemaName.close();
+
+                    CallableStatement stHour = conn.prepareCall("SELECT date_hour FROM Hour WHERE ID=?");
+                    stHour.setInt(1,h_id);
+                    stHour.execute();
+                    ResultSet h = stHour.executeQuery();
+                    while (h.next()){
+                        date = h.getString("date_hour").substring(0,10) + " godz " + h.getString("date_hour").substring(11,16);
+                    }
+                    stHour.close();
+
+                    if(movie.substring(0,4).equals("Curr")){
+                        movie = "";
+                    }
+                    movie = movie + movieTitle +"\n "+ cinemaName +"\n "+ date + "\n\n";
+                }
+                stGetHours.close();
             }
-            stGetCustomer.close();
+            stGetMovies.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,67 +118,65 @@ public class Account extends Panel {
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         panel.setLayout(null);
         JPanel pnl = new JPanel();
-        pnl.setBounds(0,0,1350,715);
+        pnl.setBounds(0,0,1350,2000);
         SpringLayout layout = new SpringLayout();
         pnl.setLayout(layout);
 
         JButton logout = new JButton("Log out");
 
-        //TODO pobrac z bazy dane uzytkownika
-        //TODO dodać wylogowywanie
         JLabel titleYourData = new JLabel("Your Data:");
-        name = new JLabel("loading...");
-        email = new JLabel("loading...");
-        birth = new JLabel("loading...");
+        JLabel nameLbl = new JLabel(name);
+        JLabel emailLbl = new JLabel(email);
+        JLabel birthLbl = new JLabel(birth);
         JLabel pass = new JLabel("***************");
         JButton editBtn = new JButton("Edit");
 
         JLabel titleYourMovies = new JLabel("Your Movies:");
-//        JTextArea movie = new JTextArea("Currently you dont have any movies booked.\nSearch for movies and book them, then you'll see them here.");
-        JTextArea movie = new JTextArea("loading...");
+        JTextArea movieTxt = new JTextArea(movie);
+        movieTxt.setEditable(false);
 
         pnl.add(logout);
         pnl.add(titleYourData);
-        pnl.add(name);
-        pnl.add(email);
-        pnl.add(birth);
+        pnl.add(nameLbl);
+        pnl.add(emailLbl);
+        pnl.add(birthLbl);
         pnl.add(pass);
         pnl.add(editBtn);
         pnl.add(titleYourMovies);
-        pnl.add(movie);
+        pnl.add(movieTxt);
 
         logout.setFont(dataFont);
         titleYourData.setFont(titleFont);
-        name.setFont(dataFont);
-        email.setFont(dataFont);
-        birth.setFont(dataFont);
+        nameLbl.setFont(dataFont);
+        emailLbl.setFont(dataFont);
+        birthLbl.setFont(dataFont);
         pass.setFont(dataFont);
         editBtn.setFont(btnFont);
         titleYourMovies.setFont(titleFont);
-        movie.setFont(dataFont);
+        movieTxt.setFont(dataFont);
 
         //horizontal
         layout.putConstraint(SpringLayout.EAST, logout, 0, SpringLayout.EAST, pnl);
         layout.putConstraint(SpringLayout.WEST, titleYourData, 100, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.WEST, name, 150, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.WEST, email, 150, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.WEST, birth, 150, SpringLayout.WEST, pnl);
+        layout.putConstraint(SpringLayout.WEST, nameLbl, 150, SpringLayout.WEST, pnl);
+        layout.putConstraint(SpringLayout.WEST, emailLbl, 150, SpringLayout.WEST, pnl);
+        layout.putConstraint(SpringLayout.WEST, birthLbl, 150, SpringLayout.WEST, pnl);
         layout.putConstraint(SpringLayout.WEST, pass, 150, SpringLayout.WEST, pnl);
         layout.putConstraint(SpringLayout.WEST, editBtn, 150, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.WEST, titleYourMovies, 100, SpringLayout.WEST, pnl);
-        layout.putConstraint(SpringLayout.WEST, movie, 150, SpringLayout.WEST, pnl);
+        layout.putConstraint(SpringLayout.WEST, titleYourMovies, 350, SpringLayout.EAST, titleYourData);
+        layout.putConstraint(SpringLayout.WEST, movieTxt, 400, SpringLayout.EAST, titleYourData);
         //vertical
         layout.putConstraint(SpringLayout.NORTH, logout, 0, SpringLayout.NORTH, pnl);
         layout.putConstraint(SpringLayout.NORTH, titleYourData, 100, SpringLayout.NORTH, pnl);
-        layout.putConstraint(SpringLayout.NORTH, name, 45, SpringLayout.NORTH, titleYourData);
-        layout.putConstraint(SpringLayout.NORTH, email, 35, SpringLayout.NORTH, name);
-        layout.putConstraint(SpringLayout.NORTH, birth, 35, SpringLayout.NORTH, email);
-        layout.putConstraint(SpringLayout.NORTH, pass, 35, SpringLayout.NORTH, birth);
+        layout.putConstraint(SpringLayout.NORTH, nameLbl, 45, SpringLayout.NORTH, titleYourData);
+        layout.putConstraint(SpringLayout.NORTH, emailLbl, 35, SpringLayout.NORTH, nameLbl);
+        layout.putConstraint(SpringLayout.NORTH, birthLbl, 35, SpringLayout.NORTH, emailLbl);
+        layout.putConstraint(SpringLayout.NORTH, pass, 35, SpringLayout.NORTH, birthLbl);
         layout.putConstraint(SpringLayout.NORTH, editBtn, 30, SpringLayout.NORTH, pass);
-        layout.putConstraint(SpringLayout.NORTH, titleYourMovies, 80, SpringLayout.NORTH, editBtn);
-        layout.putConstraint(SpringLayout.NORTH, movie, 45, SpringLayout.NORTH, titleYourMovies);
+        layout.putConstraint(SpringLayout.NORTH, titleYourMovies, 100, SpringLayout.NORTH, pnl);
+        layout.putConstraint(SpringLayout.NORTH, movieTxt, 45, SpringLayout.NORTH, titleYourMovies);
         //look
-        movie.setBackground(new Color(0,0,0,0));
+        movieTxt.setBackground(new Color(0,0,0,0));
 
         if(getIsAdmin()){
             JLabel titleAdminStuff = new JLabel("Admin Tools:");
@@ -180,7 +220,7 @@ public class Account extends Panel {
             layout.putConstraint(SpringLayout.WEST, makeBackupBtn, 250, SpringLayout.WEST, pnl);
             layout.putConstraint(SpringLayout.WEST, recoveryBtn, 375, SpringLayout.WEST, pnl);
             //vertical
-            layout.putConstraint(SpringLayout.NORTH, titleAdminStuff, 80, SpringLayout.NORTH, movie);
+            layout.putConstraint(SpringLayout.NORTH, titleAdminStuff, 30, SpringLayout.SOUTH, editBtn);
             layout.putConstraint(SpringLayout.NORTH, movieLbl, 45, SpringLayout.NORTH, titleAdminStuff);
             layout.putConstraint(SpringLayout.NORTH, addMovieBtn, 45, SpringLayout.NORTH, titleAdminStuff);
             layout.putConstraint(SpringLayout.NORTH, deleteMovieBtn, 45, SpringLayout.NORTH, titleAdminStuff);
@@ -208,6 +248,13 @@ public class Account extends Panel {
             }
         });
 
+        //TODO filtrowanie filmow
+        //TODO checkpossibleseats na repertuarze i kupowanie miejsc
+        //TODO zrobic edycje danych uzytkownika
+        //TODO dodawanie i usuwanie filmow(transakcje),
+        //TODO backup,
+        //TODO usuwanie uzytkownika
+        //TODO dodać ocenianie filmow w liscie
         //TODO przy dodawaniu filmow zrobić osobno dodanie nowego tytułu i osobno dodanie po prostu godziny do istniejących filmow z bazy
         panel.add(pnl);
     }

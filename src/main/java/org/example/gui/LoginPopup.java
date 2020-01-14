@@ -98,7 +98,6 @@ public class LoginPopup extends JFrame {
                 stCheckType.setInt(2,user_id);
                 stCheckType.execute();
                 String accType = stCheckType.getString(1);
-                System.out.println(accType);
                 stCheckType.close();
                 if(accType.equals("admin")){
                     new Main("admin",prevFr);
