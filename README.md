@@ -8,5 +8,8 @@ Basic user could only see a repertoire (movies, where are they played and when, 
 Logged in user could additionally book a seat on some movie.
 Admin had the ability to remove users, add and remove movies, cinemas, etc.
 
+## Note
+
+The app requires a database to work. I won't upload it here, but you can create your own.
 
 ![](app-overview-login.png)
