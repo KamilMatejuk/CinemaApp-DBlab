@@ -10,7 +10,3 @@ Admin had the ability to remove users, add and remove movies, cinemas, etc.
 
 
 ![](app-overview-login.png)
-
-![](app-overview-movies.png)
-
-![](app-overview-admin.png)
